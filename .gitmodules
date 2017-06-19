@@ -1,0 +1,3 @@
+[submodule "react-native-anywhere"]
+	path = react-native-anywhere
+	url = git@gitlab.com:agsoft.io/agsoft/react-native-anywhere.git

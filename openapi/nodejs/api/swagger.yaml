@@ -1,0 +1,158 @@
+---
+swagger: "2.0"
+info:
+  description: "Sample API."
+  version: "1.0.0"
+  title: "tutorial"
+  contact:
+    name: "Andi Widjaja"
+    email: "andi.widjaja@potensi.net"
+  license:
+    name: "MIT"
+    url: "https://tldrlegal.com/license/mit-license"
+host: "virtserver.swaggerhub.com"
+basePath: "/widjaja_a/tutorial/1.0.0"
+tags:
+- name: "users"
+  description: "Everything about the users"
+- name: "files"
+  description: "Everything about the files"
+schemes:
+- "https"
+security:
+- BasicAuth: []
+paths:
+  /users/{id}:
+    get:
+      tags:
+      - "users"
+      summary: "Return a user by id."
+      description: "Show user detail for the selected user id."
+      operationId: "getUserById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the object."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "The specified user ID is invalid (e.g. not a number)."
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        401:
+          description: "Unauthorized. Authentication information is missing or invalid"
+          headers:
+            WWW_Authenticate:
+              type: "string"
+        404:
+          description: "The specified resource was not found."
+          schema:
+            $ref: "#/definitions/ErrorModel"
+      x-swagger-router-controller: "Users"
+    post:
+      tags:
+      - "users"
+      summary: "Creates a new user."
+      description: "Add new user by name."
+      operationId: "addUser"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "username"
+        description: "The user to create."
+        required: false
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/User"
+      x-swagger-router-controller: "Users"
+  /zip:
+    post:
+      tags:
+      - "files"
+      summary: "Uploads a zip file."
+      description: "Upload the selected zip file."
+      operationId: "loadZipFile"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "zipfile"
+        in: "formData"
+        description: "Contents of the ZIP file."
+        required: false
+        type: "file"
+        x-mimetype: "application/zip"
+      responses:
+        200:
+          description: "OK."
+      x-swagger-router-controller: "Files"
+  /pdf:
+    get:
+      tags:
+      - "files"
+      summary: "Returns the report in the PDF format."
+      description: "get the selected PDF file."
+      operationId: "getPDFFile"
+      produces:
+      - "application/pdf"
+      parameters: []
+      responses:
+        200:
+          description: "Get a PDF file."
+          schema:
+            type: "file"
+      x-swagger-router-controller: "Files"
+securityDefinitions:
+  BasicAuth:
+    type: "basic"
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: "oauth2"
+    authorizationUrl: "https://example.com/oauth/authorize"
+    tokenUrl: "https://example.com/oauth/token"
+    flow: "accessCode"
+    scopes:
+      read: "Grants read access."
+      write: "Grants write access."
+      admin: "Grants read and write access to administrative information."
+definitions:
+  User:
+    type: "object"
+    required:
+    - "id"
+    - "username"
+    properties:
+      id:
+        type: "integer"
+        example: 1
+        description: "The user id."
+      username:
+        type: "string"
+        example: "John Doe"
+        description: "The user name."
+  ErrorModel:
+    required:
+    - "code"
+    - "message"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
