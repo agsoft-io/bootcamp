@@ -8,7 +8,8 @@ WORKDIR /app
 ADD . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install -r /app/requirements.txt
+RUN pip install Flask
+RUN pip install Redis
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
