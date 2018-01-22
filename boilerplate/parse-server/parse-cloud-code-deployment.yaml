@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: parse-cloud-code
+  name: parse-cloud-code
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: parse-cloud-code
+    spec:
+      containers:
+      - args:
+        - ls
+        - /parse/cloud
+        image: yongjhih/parse-cloud-code
+        name: parse-cloud-code
+        resources: {}
+        volumeMounts:
+        - mountPath: /parse/cloud
+          name: parse-cloud-code-claim0
+      restartPolicy: Always
+      volumes:
+      - name: parse-cloud-code-claim0
+        persistentVolumeClaim:
+          claimName: parse-cloud-code-claim0
+status: {}

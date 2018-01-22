@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mongo-data
+  name: mongo-data
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: mongo-data
+    spec:
+      containers:
+      - args:
+        - --break-mongo
+        image: mongo:3.0.8
+        name: mongo-data
+        resources: {}
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongo-data-claim0
+      restartPolicy: Always
+      volumes:
+      - name: mongo-data-claim0
+        persistentVolumeClaim:
+          claimName: mongo-data-claim0
+status: {}

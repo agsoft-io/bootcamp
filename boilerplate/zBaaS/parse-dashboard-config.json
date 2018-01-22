@@ -1,0 +1,16 @@
+{
+  "apps": [
+    {
+      "serverURL": "http://192.168.1.150:1337/parse",
+      "appId": "agc-parse",
+      "masterKey": "agsoft_parse_server",
+      "appName": "Parse Dashboard"
+    }
+  ],
+  "users": [
+    {
+      "user": "admin",
+      "pass": "adm@agsoft"
+    }
+  ]
+}

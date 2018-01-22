@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: git
+  name: git
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: git
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "22"
+        image: yongjhih/parse-server:git
+        name: git
+        ports:
+        - containerPort: 22
+        resources: {}
+        volumeMounts:
+        - mountPath: /parse/cloud
+          name: parse-cloud-code-claim0
+        - mountPath: /parse/cloud
+          name: parse-server-claim0
+        - mountPath: /certs
+          name: parse-server-claim1
+      restartPolicy: Always
+      volumes:
+      - name: parse-cloud-code-claim0
+        persistentVolumeClaim:
+          claimName: parse-cloud-code-claim0
+      - name: parse-server-claim0
+        persistentVolumeClaim:
+          claimName: parse-server-claim0
+      - name: parse-server-claim1
+        persistentVolumeClaim:
+          claimName: parse-server-claim1
+status: {}

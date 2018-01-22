@@ -1,0 +1,105 @@
+version: "3"
+
+# how to deploy:
+# docker swarm init
+# docker stack deploy -c kong-docker-cloud.yml agc-BaaS
+
+services:
+
+  ##################################################################
+  #              Docker Compose file that starts Kong              #
+  ##################################################################
+
+  # Load Balancing
+  consul:
+    image: progrium/consul:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          #cpus: "0.1"
+          memory: 128M
+    ports:
+      - 8500:8500
+    expose:
+      - 53
+      - 8300
+      - 8301
+      - 8302
+      - 8400
+      - 8500
+    networks:
+      - kongnet
+    dns:
+      - 127.0.0.1
+    command: -server -bootstrap -ui-dir /ui
+
+  nginx-lb:
+    image: nginx:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          #cpus: "0.1"
+          memory: 128M
+    ports:
+      - 8000:8000
+      - 8443:8443
+      - 8001:8001
+    expose:
+      - 8000
+      - 8443
+      - 8001
+    networks:
+      - kongnet
+    #command: >
+    #    /bin/containerpilot
+    #    -config file:///etc/containerpilot/containerpilot.json
+    #    nginx -g "daemon off;"
+
+  # Kong Database
+  kong-database:
+    image: postgres:9.4
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 200M
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=kong
+      - POSTGRES_DB=kong
+    networks:
+      - kongnet
+    
+  # Kong
+  kong:
+    image: kong:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+        #  cpus: "0.1"
+          memory: 200M
+    ports:
+      - 8000
+      - 8443
+      - 8001
+    expose:
+      - 7946
+      - 7946/udp
+    environment:
+      - KONG_DATABASE=postgres
+      - KONG_PG_HOST=kong-database
+    networks:
+      - kongnet
+
+networks:
+  kongnet:
