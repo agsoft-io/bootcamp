@@ -1,2 +1,0 @@
-# bootcamp
-for tutorial
